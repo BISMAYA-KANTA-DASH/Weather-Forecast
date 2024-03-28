@@ -4,8 +4,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 public class TABLE_STRUCTURE {
     public static void main(String[] args) {
-        String csvFile = "weather_data.csv";
-        String htmlFile = "table_structure.html";
+        String csvFile = "HTML_FILE//weather_data.csv";
+        String htmlFile = "HTML_FILE//JAVA_PROJECT//table_structure.html";
         String line;
         String csvSplitBy = ",";
 

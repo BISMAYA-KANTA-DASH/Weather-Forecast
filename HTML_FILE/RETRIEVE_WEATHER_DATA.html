@@ -1,0 +1,15 @@
+<html><head><title>RETRIEVE_WEATHER_DATA</title><style>table {border-collapse: collapse;width:100%;}
+th, td {border: 1px solid black;padding: 8px;text-align:center;color:yellow;}body{background-image: url('CLEAR_SKY.jpg');background-repeat: no-repeat;background-attachment: fixed;background-size: cover;}</style></head><body>&emsp;<a style="text-align:center;FONT-SIZE:15px;" href="HOME.html">HOME</a><h1 style='text-align:center;background-color:yellow;color:green'>WEATHER_DATA</h1><form>ENTER MONTH NUMBER: <input type="text" id="rowIndex" name="rowIndex"><input type="button" value="Display Row" onclick="displayRow()"></form><div id="output"></div><script>function displayRow() {var rowIndex = document.getElementById('rowIndex').value;var rows = `Month, Temperature(°C), Precipitation(mm), Humidity(%), Wind Speed(kmph)
+Jan, 21.0, 12.9, 73, 5.0
+Feb, 25.7, 20.4, 66, 5.3
+Mar, 30.3, 42.4, 66, 6.1
+Apr, 32.6, 48.8, 70, 7.2
+May, 34.8, 124.5, 76, 7.8
+Jun, 33.1, 259.3, 84, 7.6
+Jul, 31.4, 334.4, 85, 7.0
+Aug, 30.8, 303.6, 84, 6.6
+Sep, 29.8, 270.0, 82, 6.0
+Oct, 27.8, 160.0, 79, 5.7
+Nov, 24.4, 25.4, 73, 4.7
+Dec, 22.3, 6.6, 67, 4.3
+`.split('\n');var rowData = rows[rowIndex].split(',');var table = '<table border="1"><tr>';rowData.forEach(function(cell) {table += '<td>' + cell + '</td>';});table += '</tr></table>';document.getElementById('output').innerHTML = table;}</script></body></html>

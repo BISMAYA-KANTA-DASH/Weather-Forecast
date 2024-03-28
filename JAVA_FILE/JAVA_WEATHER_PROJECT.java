@@ -9,8 +9,8 @@ public class JAVA_WEATHER_PROJECT
 {
     public static void main(String[] args)
     {
-        String textFileName = "HOME_PAGE.txt";
-        String fileName = "HOME.html";
+        String textFileName = "C:\\Users\\KIIT\\BISMAYA\\PROGRAMMING_FILES\\BISMAYA_CODE\\JAVA_CODES\\JAVA_PROJECT\\HTML_FILE\\HOME_PAGE.txt";
+        String fileName = "C:\\Users\\KIIT\\BISMAYA\\PROGRAMMING_FILES\\BISMAYA_CODE\\JAVA_CODES\\JAVA_PROJECT\\HTML_FILE\\HOME.html";
         try
         {
             FileReader fileReader = new FileReader(textFileName);

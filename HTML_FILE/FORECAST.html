@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Combined Graph and Weather Forecast</title>
+    <style>
+        dis {display: none;}
+        body {background-image: url('CLEAR_SKY.jpg');background-repeat: no-repeat;background-attachment: fixed;background-size: cover;}
+        #graphContainer {display: none;}
+        table {border-collapse: collapse;width: 100%;}
+        th, td {border: 1px solid black;padding: 8px;text-align: center;color: yellow;}
+        input[type="text"],input[type="number"] {width: 130px;}
+    </style>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <div id="weatherForecast">
+        <p>&emsp;<a style="text-align:center;FONT-SIZE:15px;" href="HOME.html">HOME</a>&emsp;&emsp;&emsp;<a style="text-align:center;FONT-SIZE:15px;" href="trial_graph.html">GRAPHICAL REPRESENTATION</a></p>
+        <h1 style="text-align:center;background-color:yellow;color:green;">WEATHER FORECAST </h1>
+        <form id="dataForm">
+            <label for="numRows">ENTER MONTH:</label>
+            <input type="month" id="MONTH" name="MONTH">
+            <label for="numRows">ENTER NUMBER OF ROWS:</label>
+            <input type="number" id="numRows" name="numRows">
+            <br>
+            <button type="button" onclick="enableDataEntry()">Continue</button>
+            <br>
+            <dis><p style="color:red;"><b>*ENTER YOUR DATA BELOW</b></p></dis>
+            <br>
+            <label for="temperature">Temperature(°C):</label>
+            <input type="number" id="temperature" name="temperature">
+
+            <label for="precipitation">Precipitation(mm):</label>
+            <input type="number" id="precipitation" name="precipitation">
+
+            <label for="humidity">Humidity(%):</label>
+            <input type="number" id="humidity" name="humidity">
+
+            <label for="windSpeed">Wind Speed(kmph):</label>
+            <input type="number" id="windSpeed" name="windSpeed"><br><br>
+
+            <button type="button" onclick="addRow()" id="addButton">Add to Table</button>
+        </form>
+
+        <br>
+
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th>SLNO</th>
+                    <th>TEMPERATURE(°C)</th>
+                    <th>PRECIPITATION(mm)</th>
+                    <th>HUMIDITY(%)</th>
+                    <th>WIND SPEED(kmph)</th>
+                    <th>REMOVE</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+        <br>
+        <button type="button" onclick="calculateStatistics()">FORCAST</button>
+        <p id="temperatureResult"></p>
+        <p id="precipitationResult"></p>
+        <p id="humidityResult"></p>
+        <p id="windSpeedResult"></p>
+        <br>
+        <button type="button" onclick="plotGraph()">PLOT GRAPH</button>
+        <br>
+    </div>
+    <div id="graphContainer" style="max-width:500px;"><div id="myPlot" style="width:100%;height:500px;"></div></div>
+    <br>
+    <script>
+        var counter = 0;
+        function enableDataEntry() {
+            var numRows = parseInt(document.getElementById("numRows").value);
+            if (numRows > 0 && numRows < 15) {
+                document.getElementById("addButton").disabled = false;
+                document.querySelector("dis").style.display = "block";
+            } else {
+                alert("Please enter a valid number of rows (1 to 14).");
+            }
+        }
+        function addRow() {
+            var numRows = parseInt(document.getElementById("numRows").value);
+            if (counter >= numRows) {
+                document.getElementById("addButton").disabled = true;
+            } else {
+                var month = counter+1;
+                var temperature = parseFloat(document.getElementById("temperature").value);
+                var precipitation = parseFloat(document.getElementById("precipitation").value);
+                var humidity = parseFloat(document.getElementById("humidity").value);
+                var windSpeed = parseFloat(document.getElementById("windSpeed").value);
+                if (!isNaN(temperature) && !isNaN(precipitation) && !isNaN(humidity) && !isNaN(windSpeed)) {
+                    var newRow = document.createElement("tr");
+                    var monthCell = document.createElement("td");
+                    monthCell.textContent = month;
+                    newRow.appendChild(monthCell);
+                    var temperatureCell = document.createElement("td");
+                    temperatureCell.textContent = temperature;
+                    newRow.appendChild(temperatureCell);
+                    var precipitationCell = document.createElement("td");
+                    precipitationCell.textContent = precipitation;
+                    newRow.appendChild(precipitationCell);
+                    var humidityCell = document.createElement("td");
+                    humidityCell.textContent = humidity;
+                    newRow.appendChild(humidityCell);
+                    var windSpeedCell = document.createElement("td");
+                    windSpeedCell.textContent = windSpeed;
+                    newRow.appendChild(windSpeedCell);
+                    counter++;
+                    var removeCell = document.createElement("td"); // Create remove cell
+                    var removeButton = document.createElement("button");
+                    removeButton.textContent = "Remove";
+                    removeButton.onclick = function() {
+                        if (counter == 0) {
+                            alert("THERE IS NO DATA TO BE REMOVED");
+                        } else {
+                            removeRow(this);
+                            document.getElementById("addButton").disabled = false;
+                        }
+                    }
+                    removeCell.appendChild(removeButton); // Append removeButton to removeCell
+                    newRow.appendChild(removeCell); // Append removeCell to newRow
+                    document.getElementById("dataTable").getElementsByTagName("tbody")[0].appendChild(newRow); // Append newRow to table body
+                    document.getElementById("addButton").disabled = counter >= numRows;
+                } else {
+                    alert("Please enter valid data for all fields.");
+                }
+            }
+        }
+
+        function removeRow(button) {
+            var row = button.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+            counter--;
+        }
+
+        function calculateStatistics() 
+        {
+            var temperatureValues = [];
+            var precipitationValues = [];
+            var humidityValues = [];
+            var windSpeedValues = [];
+            var FORCAST_DATA = [];
+            var table = document.getElementById("dataTable");
+            var rows = table.getElementsByTagName("tr");
+            for (var i = 1; i < rows.length; i++) {
+                var cells = rows[i].getElementsByTagName("td");
+                var temperature = parseFloat(cells[1].textContent);
+                var precipitation = parseFloat(cells[2].textContent);
+                var humidity = parseFloat(cells[3].textContent);
+                var windSpeed = parseFloat(cells[4].textContent);
+                if (!isNaN(temperature)) {temperatureValues.push(temperature);}
+                if (!isNaN(precipitation)) {precipitationValues.push(precipitation);}
+                if (!isNaN(humidity)) {humidityValues.push(humidity);}
+                if (!isNaN(windSpeed)) {windSpeedValues.push(windSpeed);}
+            }
+            if (temperatureValues.length > 0) 
+            {
+                var temperatureMean = calculateMean(temperatureValues);
+                document.getElementById("temperatureResult").innerHTML = "Mean Temperature: " + temperatureMean.toFixed(2) + "°C";
+                FORCAST_DATA.push(temperatureMean);
+            } else {document.getElementById("temperatureResult").innerHTML = "No temperature data available.";}
+            if (precipitationValues.length > 0) 
+            {
+                var precipitationMean = calculateMean(precipitationValues);
+                document.getElementById("precipitationResult").innerHTML = "Mean Precipitation: " + precipitationMean.toFixed(2) + "mm";
+                FORCAST_DATA.push(precipitationMean);
+            } else {document.getElementById("precipitationResult").innerHTML = "No precipitation data available.";}
+            if (humidityValues.length > 0) {
+                var humidityMean = calculateMean(humidityValues);
+                document.getElementById("humidityResult").innerHTML = "Mean Humidity: " + humidityMean.toFixed(2) + "%";
+                FORCAST_DATA.push(humidityMean);
+            } else {document.getElementById("humidityResult").innerHTML = "No humidity data available.";}
+            if (windSpeedValues.length > 0) {
+                var windSpeedMean = calculateMean(windSpeedValues);
+                document.getElementById("windSpeedResult").innerHTML = "Mean Wind Speed: " + windSpeedMean.toFixed(2) + "kmph";
+                FORCAST_DATA.push(windSpeedMean);
+            } else {document.getElementById("windSpeedResult").innerHTML = "No wind speed data available.";}
+        }
+
+        function calculateMean(numbers) {
+            var total = numbers.reduce((acc, cur) => acc + cur, 0);
+            return total / numbers.length;
+        }
+        function plotGraph() {
+            var table = document.getElementById("dataTable");
+            var rows = table.getElementsByTagName("tr");
+            var xArray_humidity = [1];
+            var yArray_humidity = [];
+            var yArray_temp = [];
+            var yArray_windspeed = [];
+            var yArray_prec = [];
+            for (var i = 1; i < rows.length; i++) {
+                var cells = rows[i].getElementsByTagName("td");
+                if (cells.length >= 2) {
+                    var temperature = parseFloat(cells[1].textContent);
+                    var precipitation = parseFloat(cells[2].textContent);
+                    var windspeed = parseFloat(cells[4].textContent);
+                    var humidity = parseFloat(cells[3].textContent);
+                    xArray_humidity.push(i+1);
+                    yArray_humidity.push(humidity);
+                    yArray_temp.push(temperature);
+                    yArray_windspeed.push(windspeed);
+                    yArray_prec.push(precipitation);
+                }
+            }
+            var mean_temp = parseFloat(document.getElementById("temperatureResult").textContent.split(":")[1].trim().slice(0, -1));
+            var mean_humid = parseFloat(document.getElementById("humidityResult").textContent.split(":")[1].trim().slice(0, -1));
+            var mean_wind = parseFloat(document.getElementById("windSpeedResult").textContent.split(":")[1].trim().slice(0, -1));
+            var mean_prec = parseFloat(document.getElementById("precipitationResult").textContent.split(":")[1].trim().slice(0, -1));
+            yArray_humidity.push(mean_humid);
+            yArray_temp.push(mean_temp);
+            yArray_windspeed.push(mean_wind);
+            yArray_prec.push(mean_prec);
+            const data = [
+                { x: xArray_humidity, y: yArray_humidity, mode: "lines+markers", line: { color: 'blue' }, marker: { color: 'red' }, name: "Humidity" },
+                { x: xArray_humidity, y: yArray_temp, mode: "lines+markers", line: { color: 'green' }, marker: { color: 'red' }, name: "Temperature" },
+                { x: xArray_humidity, y: yArray_prec, mode: "lines+markers", line: { color: 'yellow' }, marker: { color: 'red' }, name: "Precipitation" },
+                { x: xArray_humidity, y: yArray_windspeed, mode: "lines+markers", line: { color: 'violet' }, marker: { color: 'red' }, name: "Wind Speed" }
+            ];
+            const layout = { xaxis: { title: "DAYS" }, yaxis: { title: "PARAMETER-VALUE" }, title: "Graph", autosize: true, plot_bgcolor: 'lightgrey', paper_bgcolor: 'lightblue' };
+            Plotly.newPlot("myPlot", data, layout);
+            document.getElementById("graphContainer").style.display = "block";
+        }
+    </script>
+</body>
+</html>

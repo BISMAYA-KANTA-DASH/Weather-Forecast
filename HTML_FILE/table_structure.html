@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
 <title>WEATHER REPORT</title>
@@ -5,7 +6,21 @@
 table {border-collapse: collapse;width:100%;}
 th, td {border: 1px solid black;padding: 8px;text-align:center;color:yellow;}
 body {background-image: url('CLEAR_SKY.jpg');background-repeat: no-repeat;background-attachment: fixed;background-size: cover;}
+#weather-table, #footer {display: none;} /* Hide the table and footer by default */
 </style>
+<script>
+function toggleTable() {
+    var table = document.getElementById("weather-table");
+    var footer = document.getElementById("footer");
+    if (table.style.display === "none") {
+        table.style.display = "table";
+        footer.style.display = "block";
+    } else {
+        table.style.display = "none";
+        footer.style.display = "none";
+    }
+}
+</script>
 </head>
 <body>
 <p>
@@ -13,7 +28,36 @@ body {background-image: url('CLEAR_SKY.jpg');background-repeat: no-repeat;backgr
 &emsp;&emsp;&emsp;|&emsp;&emsp;&emsp;<a style="text-align:center;FONT-SIZE:15px;" href="FORECAST.html">FORECAST TOOL</a>
 </p>
 <h1 style="text-align:center;background-color:yellow;color:green">WEATHER DATA</h1>
-<table border="1">
+<p style="color:red;"><b>*FOR DISPLAYING WEATHER DATA OF A SPECIFIC MONTH ENTER THE MONTH IN THE TEXT BOX AND CLICK ON DISPLAY WEATHER.*</b></p>
+<form>ENTER MONTH NUMBER<br><br><input type="text" id="rowIndex" name="rowIndex"><br><br>
+<input type="button" value="DISPLAY WEATHER" onclick="displayRow()">
+</form>
+<br>
+<div id="output"></div>
+<script>function displayRow() 
+{var rowIndex = document.getElementById('rowIndex').value;var rows = `Month, Temperature(°C), Precipitation(mm), Humidity(%), Wind Speed(kmph)
+January, 21.0, 12.9, 73, 5.0
+February, 25.7, 20.4, 66, 5.3
+March, 30.3, 42.4, 66, 6.1
+April, 32.6, 48.8, 70, 7.2
+May, 34.8, 124.5, 76, 7.8
+June, 33.1, 259.3, 84, 7.6
+July, 31.4, 334.4, 85, 7.0
+August, 30.8, 303.6, 84, 6.6
+September, 29.8, 270.0, 82, 6.0
+October, 27.8, 160.0, 79, 5.7
+November, 24.4, 25.4, 73, 4.7
+December, 22.3, 6.6, 67, 4.3
+`.split('\n');var rowData = rows[rowIndex].split(',');
+var table = '<table border="1"><tr>';
+rowData.forEach(function(cell) {table += '<td>' + cell + '</td>';});table += '</tr></table>';
+document.getElementById('output').innerHTML = table;}
+</script>
+<p style="color:red;"><b>*FOR DISPLAYING WEATHER DATA OF ALL THE MONTHS CLICK ON SHOW MONTHLY WEATHER DATA BELOW.*</b></p>
+<button onclick="toggleTable()">SHOW MONTHLY WEATHER DATA</button>
+<br>
+<br>
+<table id="weather-table" border="1">
 <tr>
 <th>MONTH</th>
 <th>TEMPERATURE(°C)</th>
@@ -106,7 +150,9 @@ body {background-image: url('CLEAR_SKY.jpg');background-repeat: no-repeat;backgr
 <td style="text-align:center;">4.3</td>
 </tr>
 </table>
-<footer>
+<br>
+<br>
+<footer id="footer">
 <p style="text-align:center;font-size:15px;color: red"><b>NOTE:THIS DATA IS A ABSOLUTE DATA USED TO COMPARE THE CHANGES IN WEATHER(MONTHLY DATA).</b>
 </p>
 </footer>
